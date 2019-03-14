@@ -1,12 +1,13 @@
-import React, {Component, Fragment} from 'react'
+import React, { Component, Fragment } from 'react'
 import filters from './mocks/filters'
 import genres from './mocks/genres'
 import './css/Header.css'
 import movies from './mocks/movies'
-import {FilterList} from './components/FilterList'
-import {MovieList} from './components/MovieList'
-import {Sidebar} from './components/Sidebar'
-import {filterByCategory, filterBySearch} from './libs/utils'
+import { FilterList } from './components/FilterList'
+import { MovieList } from './components/MovieList'
+import { Sidebar } from './components/Sidebar'
+import { Header } from './components/Header'
+import { filterByCategory, filterBySearch } from './libs/utils'
 import logo from './images/hackflix_logo.svg'
 
 const ALL = 'All'
@@ -32,7 +33,7 @@ export class App extends Component {
   selectTab = category => {
     //TODO 2: the newFilters array should reflect the user's click
     //You need to change the selected property of the filter that the user clicked
-    const newFilters = this.state.filters
+    const newFilters = this.state.filters.map((filter) => filter.category === category ? { ...filter, selected: true } : { ...filter, selected: false } )
     this.setState({filters: newFilters}, this.filterMovies)
   }
 
@@ -61,11 +62,13 @@ export class App extends Component {
   //Function used to toggle the state of the sidebar, containing the search
   toggleSideBar = () => {
     //TODO 4: toggle the isSidebarOpened property when this function is called
+    this.setState({ isSidebarOpened: !this.state.isSidebarOpened })
   }
 
   //This function is called when a user types in the search bar
   search = ({target: {value}}) => {
     //TODO 5: Set the searchValue in the state and then call the filterMovies function
+    this.setState({ searchValue: value }, this.filterMovies)
   }
 
   render() {
@@ -74,17 +77,13 @@ export class App extends Component {
     return (
       <Fragment>
         {/* TODO 1: Extract the header below into it's own React component and use it here  */}
-        <header>
-          <img src={logo} alt="logo"/>
-        </header>
+        <Header logo={logo} />
 
         <main className="main-content">
           {/* The FilterList component will display the list of filters and the number of movies */}
           <FilterList
             filters={filters}
-            selectTab={() => {
-              //TODO 3: Pass the function to select the tab to the FilterList component
-            }}
+            selectTab={this.selectTab}
             count={filteredMovies.length}/>
 
           {/* This is the main component, that displays the list of movies  */}
